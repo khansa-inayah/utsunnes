@@ -25,37 +25,49 @@
             h1{
                 text-align: center;
                 color: #333;
-                margin-bottom: 30px;
+                margin-bottom: 20px;
                 font-size: 28px;
             }
-            .success-message{
-                background-color: #d4edda;
-                color: #155724;
+            .message-box{
                 padding: 15px;
                 margin-bottom: 20px;
-                border: 1px solid #c3e6cb;
+                border: 1px solid;
                 border-radius: 5px;
                 text-align: center;
                 font-weight: bold;
             }
-            table{
+            .success{
+                background-color: #d4edda;
+                color: #155724;
+                border-color: #c3e6cb;
+            }
+            .error{
+                background-color: #f8d7da;
+                color: #721c24;
+                border-color: #f5c6cb;
+            }
+            table.data-table{
                 width: 100%;
                 border-collapse: collapse;
                 margin-bottom: 20px;
+                margin-top: 20px;
             }
-            th, td{
+            .data-table th, .data-table td{
                 padding: 12px;
                 text-align: left;
-                border-bottom: 1px solid #ddd;
+                border: 1px solid #ddd;
             }
-            th{
+            .data-table th{
                 background-color: #f8f9fa;
                 font-weight: bold;
                 color: #333;
-                width: 30%;
             }
-            td{
+            .data-table td{
                 color: #666;
+            }
+            .data-table th:first-child, .data-table td:first-child {
+                width: 10%;
+                text-align: center;
             }
             .back-button{
                 text-align: center;
@@ -79,23 +91,86 @@
         <div class="container">
             <h1>Data Registrasi User</h1>
             
-            <?php if (isset($_POST['submit'])): ?>
-                <div class="success-message">
+            <?php 
+            if (isset($_POST['submit'])):
+            
+                $nama_depan = $_POST['nama_depan'];
+                $nama_belakang = $_POST['nama_belakang'];
+                $asal_kota = $_POST['asal_kota'];
+                $umur = (int)$_POST['umur'];
+                
+                $nama_lengkap = $nama_depan . ' ' . $nama_belakang;
+
+                if ($umur < 10):
+            ?>
+                <div class="message-box error">
+                    Error: Umur minimal adalah 10 tahun.
+                </div>
+                <div class="back-button">
+                    <a href="index.html">Kembali ke Form Registrasi</a>
+                </div>
+
+            <?php 
+                else: 
+            ?>
+                <div class="message-box success">
                     Registrasi Berhasil!
                 </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Nama Lengkap</th>
+                            <th>Umur</th>
+                            <th>Asal Kota</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Loop berjalan sebanyak $umur kali (misal 30 kali)
+                        for ($i = 1; $i <= $umur; $i++) {
+                            
+                            // Cek 1: Apakah $i ganjil?
+                            $isGanjil = ($i % 2 != 0);
+                            // Cek 2: Apakah $i BUKAN 7 dan BUKAN 13?
+                            $isNotSkipped = ($i != 7 && $i != 13);
+
+                            // Hanya cetak baris jika KEDUA kondisi true
+                            if ($isGanjil && $isNotSkipped) {
+                                echo "<tr>";
+                                echo "<td>" . $i . "</td>";
+                                echo "<td>" . $nama_lengkap . "</td>";
+                                echo "<td>" . $umur . " tahun</td>";
+                                echo "<td>" . $asal_kota . "</td>";
+                                echo "</tr>";
+                            }
+                            // Jika $i genap, atau 7, atau 13, tidak terjadi apa-apa
+                            // dan loop lanjut ke $i berikutnya
+                        }
+                        ?>
+                    </tbody>
+                </table>
                 
                 <div class="back-button">
                     <a href="index.html">Kembali ke Form Registrasi</a>
                 </div>
-            <?php else: ?>
-                <div style="text-align: center; color: #dc3545; padding: 20px;">
-                    <h3>Error: Data tidak ditemukan</h3>
-                    <p>Silakan isi form registrasi terlebih dahulu.</p>
-                    <div class="back-button">
-                        <a href="index.html">Kembali ke Form Registrasi</a>
-                    </div>
+            
+            <?php 
+                endif;
+
+            else: 
+            ?>
+                <div class="message-box error">
+                    Error: Data tidak ditemukan.<br>
+                    Silakan isi form registrasi terlebih dahulu.
                 </div>
-            <?php endif; ?>
+                <div class="back-button">
+                    <a href="index.html">Kembali ke Form Registrasi</a>
+                </div>
+            <?php 
+            endif;
+            ?>
         </div>
     </body>
 </html>
